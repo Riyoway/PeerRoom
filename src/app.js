@@ -21,6 +21,8 @@ function status(label,type='') {
   setText('sessionMode',!state.room?'No room':type==='live'?'Connected':'Waiting')
   setText('roomStatus',type==='live'?'Peer connected':'Waiting for peer…')
   setText('iceStatus',type==='live'?'P2P':'')
+  setText('peerSidebarStatus',type==='live'?'Here':'Waiting')
+  $('peerRow').classList.toggle('connected',type==='live')
   $('micButton').disabled=!state.room
   $('shareButton').disabled=!state.room
   $('audioButton').disabled=!state.peerId
@@ -84,7 +86,12 @@ function clearChat() {
   $('chatLog').replaceChildren()
   const msg=document.createElement('div')
   msg.className='empty-chat'
-  msg.textContent='No messages'
+  const icon=document.createElement('img')
+  icon.src='./icons/messages-square.svg'
+  icon.alt=''
+  const label=document.createElement('strong')
+  label.textContent='No messages yet'
+  msg.append(icon,label)
   $('chatLog').append(msg)
 }
 function remoteScreenVisibility() {
@@ -115,6 +122,7 @@ async function playRemote() {
   }
   state.audioNeedsGesture=blocked
   setText('audioButtonLabel',blocked?'Enable audio':$('remoteAudio').muted?'Unmute audio':'Mute audio')
+  $('audioIcon').src='./icons/'+($('remoteAudio').muted?'volume-x':'volume-2')+'.svg'
 }
 function clearRemote() {
   state.remoteScreen=null
@@ -124,6 +132,7 @@ function clearRemote() {
   $('remoteAudio').muted=false
   $('remoteVideo').muted=false
   setText('audioButtonLabel','Mute audio')
+  $('audioIcon').src='./icons/volume-2.svg'
   show('remoteEmpty',true)
   $('fullScreen').disabled=true
 }
@@ -180,6 +189,8 @@ function micUI() {
   const on=live&&track.enabled
   setText('micButtonLabel',!live?'Start mic':on?'Mute mic':'Unmute mic')
   setText('micStatus',!live?'Mic off':on?'Mic on':'Mic muted')
+  setText('micSidebarStatus',!live?'Idle':on?'Live':'Muted')
+  $('micIcon').src='./icons/'+(on?'mic':'mic-off')+'.svg'
   $('micDot').classList.toggle('live',on)
   $('micButton').classList.toggle('active',on)
 }
@@ -229,6 +240,7 @@ function screenUI() {
   const live=Boolean(track&&track.readyState==='live')
   setText('shareButtonLabel',live?'Stop sharing':'Share screen')
   setText('screenStatus',live?'Sharing':'Not sharing')
+  $('shareIcon').src='./icons/'+(live?'monitor-off':'monitor-up')+'.svg'
   $('shareButton').classList.toggle('active',live)
   $('screenDot').classList.toggle('live',live)
   show('localEmpty',!live)
@@ -291,6 +303,7 @@ async function toggleAudio() {
   $('remoteVideo').muted=!muted
   if (muted) await playRemote()
   else setText('audioButtonLabel','Unmute audio')
+  $('audioIcon').src='./icons/'+(muted?'volume-2':'volume-x')+'.svg'
 }
 async function leaveRoom() {
   if (!state.room||state.leaving) return

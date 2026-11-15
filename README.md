@@ -20,6 +20,7 @@ No accounts, offer/answer codes, or app installation required.
 - Microphone selection and an optional music input mode
 - P2P chat, mute controls, and leave/rejoin
 - Static site, deployed on GitHub Pages
+- Rounded, monochrome interface using bundled [Lucide](https://lucide.dev/) SVG icons
 
 ## Architecture
 
@@ -46,4 +47,4 @@ The source code is src/app.js, with bundled browser output in app.js. Deploy the
 
 Modern desktop browsers with WebRTC, HTTPS for microphone and screen capture, and access to the public signaling relays. System audio capture depends on OS/browser support. Mobile screen capture may be unavailable.
 
-Third-party code: Trystero (MIT) and bundled dependencies. See package-lock.json for exact development dependency versions.
+Third-party code: Trystero and its dependencies (MIT), plus Lucide SVG icons (ISC, with Feather-derived assets). See [THIRD_PARTY_LICENSES.md](./THIRD_PARTY_LICENSES.md), [LUCIDE_LICENSE](./LUCIDE_LICENSE), and package-lock.json.
