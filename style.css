@@ -351,3 +351,147 @@ button img, .rail-item img, .channel-icon img, .sidebar-label img, .person-avata
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
+
+/* Participant and connection clarity */
+.header-right {
+  border: 1px solid #414249;
+  background: #2e2f35;
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-weight: 650;
+  color: #eeeef0;
+}
+.header-right:has(.status-dot.live) {
+  background: #ededf0;
+  border-color: #ededf0;
+  color: #1b1c20;
+}
+.header-right .status-dot.live { background: #282a30; box-shadow: 0 0 0 3px #25262c15; }
+.header-right:has(.status-dot.failed) { border-color: #986873; }
+.session-heading .pill { font-weight: 700; padding: 8px 14px; }
+.session-heading:has(+ .connection-banner.connected) .pill { background: #e7e7ea; border-color: #e7e7ea; color: #24252a; }
+
+.connection-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid #4c4d55;
+  border-radius: 19px;
+  min-height: 76px;
+  padding: 13px 17px;
+  background: #292a30;
+  color: #f0f0f3;
+  margin-top: -6px;
+  flex-shrink: 0;
+  transition: background .2s, border-color .2s;
+}
+.connection-banner-icon {
+  width: 44px; height: 44px; flex-shrink: 0;
+  background: #414248; border-radius: 15px; display: grid; place-items: center;
+}
+.connection-banner-icon img { filter: invert(1); width: 22px; height: 22px; }
+.connection-copy { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.connection-copy strong { font-weight: 730; font-size: 14px; letter-spacing: -.1px; }
+.connection-copy span { font-size: 11px; color: #a6a7b2; }
+.connection-tag {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-weight: 750;
+  font-size: 10px;
+  letter-spacing: .9px;
+  background: #404148;
+  border: 1px solid #575860;
+  padding: 8px 11px;
+  border-radius: 999px;
+  color: #dcdee3;
+}
+.connection-banner.connected { background: #ececef; color: #1d1e22; border-color: #f5f5f6; }
+.connection-banner.connected .connection-banner-icon { background: #2b2c32; }
+.connection-banner.connected .connection-copy span { color: #5c5e68; }
+.connection-banner.connected .connection-tag { background: #292a30; border-color: #292a30; color: #f4f4f5; }
+.connection-banner.failed { border-color: #8e626c; background: #362a31; }
+.connection-banner.failed .connection-banner-icon { background: #5d4149; }
+.connection-banner.failed .connection-tag { background: #50383f; border-color: #75555d; }
+.connection-banner.waiting .connection-banner-icon { background: #4b4c53; }
+
+.video-card { border-width: 2px; }
+.video-card.remote-card { background: #151619; border-color: #3e3f46; }
+.video-card.remote-card.disconnected { border-color: #33343a; }
+.video-card.remote-card.is-connected { border-color: #82838b; }
+.video-card.local-card { background: linear-gradient(140deg, #34353b, #27282e); border-color: #686970; }
+.video-topline {
+  position: absolute; z-index: 4; left: 17px; top: 17px; right: 17px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; pointer-events: none;
+}
+.video-identity {
+  font-size: 10px;
+  font-weight: 770;
+  letter-spacing: 1px;
+  color: #d2d2d8;
+}
+.presence-chip, .self-chip {
+  border-radius: 999px; border: 1px solid #55565e;
+  padding: 6px 10px; font-size: 10px; font-weight: 710;
+  background: #2b2c32; color: #bebfc7; white-space: nowrap;
+}
+.remote-card.is-connected .presence-chip {
+  background: #eeeef0; color: #24252a; border-color: #eeeef0;
+}
+.self-chip {
+  background: #f1f1f3; color: #28292e; border-color: #f1f1f3;
+  letter-spacing: .5px;
+}
+.remote-card .participant-avatar { background: #2e2f35; border: 2px solid #4b4c55; }
+.local-card .participant-avatar.self { background: #5e6068; border: 2px solid #81828b; }
+.local-card .participant-avatar.self img { width: 48px; height: 48px; }
+.video-label { gap: 7px; font-weight: 730; }
+.video-label-role {
+  margin-left: 5px; padding-left: 8px;
+  border-left: 1px solid #686970;
+  font-size: 9px; letter-spacing: 1px; color: #a6a8b1;
+  font-weight: 750;
+}
+.local-card .video-label { background: #ececf0; color: #212227; }
+.local-card .video-label .video-label-role { color: #5c5e67; border-color: #a4a5ad; }
+.local-card .avatar-dot { background: #1f2025; }
+.remote-card .video-label { background: #24252acb; }
+
+.person-row.own-person {
+  border: 1px solid #474850;
+  background: #303137;
+}
+.person-row.own-person .person-avatar.self {
+  background: #e5e5e9;
+}
+.person-row.own-person .person-avatar.self img { filter: none; }
+.person-details { display: flex; flex-direction: column; min-width: 0; gap: 4px; }
+.person-role { font-size: 9px; color: #858793; letter-spacing: .55px; white-space: nowrap; }
+.person-row.own-person .person-role { color: #b7b8c1; }
+.person-row.peer-row { border: 1px solid transparent; }
+.person-row.peer-row .person-avatar { background: #292a2e; border: 1px solid #52535b; }
+.person-row.peer-row.connected { border-color: #515259; background: #26272c; }
+.person-row.peer-row.connected .person-avatar { background: #575860; }
+.person-row.peer-row.connected .person-hint { color: #e9e9ed; }
+.person-row.peer-row.connected .person-hint::before {
+  content: ""; display: inline-block; width: 6px; height: 6px;
+  background: #ededf0; border-radius: 50%; margin-right: 6px; vertical-align: 1px;
+}
+
+@media (max-width: 700px) {
+  .connection-banner { min-height: 66px; border-radius: 16px; padding: 11px; gap: 10px; }
+  .connection-banner-icon { width: 36px; height: 36px; border-radius: 12px; }
+  .connection-banner-icon img { width: 19px; height: 19px; }
+  .connection-copy strong { font-size: 12px; }
+  .connection-copy span { font-size: 10px; }
+  .connection-tag { font-size: 8px; padding: 7px; }
+  .video-topline { left: 10px; right: 10px; top: 10px; }
+  .video-identity { font-size: 8px; letter-spacing: .5px; }
+  .presence-chip, .self-chip { font-size: 8px; padding: 5px 7px; }
+  .video-label-role { display: none; }
+  .header-right { padding: 8px 10px; font-size: 10px; }
+}
+
+/* Keep fullscreen separate from the peer status badge. */
+.remote-card .floating-action { top: 57px; }
+@media (max-width: 700px) { .remote-card .floating-action { top: 48px; right: 10px; width: 29px; height: 29px; } }

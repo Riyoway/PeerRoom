@@ -16,13 +16,32 @@ function report(error) {
   notice(error?.message||String(error),true)
 }
 function status(label,type='') {
+  const connected=Boolean(state.room&&state.peerId&&type==='live')
+  const failed=Boolean(state.room&&type==='failed'&&!connected)
+  const waiting=Boolean(state.room&&!connected&&!failed)
+  const mode=connected?'Connected':failed?'Issue':waiting?'Waiting':'No room'
+  const title=connected?'Connected to peer':failed?'Connection issue':waiting?'Waiting for peer':'Not connected'
+  const hint=connected?'You can talk and share your screen':failed?'Check your network and try again':waiting?'Share the invite link to connect':'Create a room to get started'
+  const stage=connected?'connected':failed?'failed':waiting?'waiting':'offline'
+
   setText('connectionLabel',label)
-  $('connectionDot').className='status-dot'+(type?' '+type:'')
-  setText('sessionMode',!state.room?'No room':type==='live'?'Connected':'Waiting')
-  setText('roomStatus',type==='live'?'Peer connected':'Waiting for peer…')
-  setText('iceStatus',type==='live'?'P2P':'')
-  setText('peerSidebarStatus',type==='live'?'Here':'Waiting')
-  $('peerRow').classList.toggle('connected',type==='live')
+  $('connectionDot').className='status-dot'+(connected?' live':failed?' failed':waiting?' working':'')
+  setText('sessionMode',mode)
+  setText('roomStatus',connected?'Peer connected':failed?'Connection issue':'Waiting for peer…')
+  setText('iceStatus',connected?'Direct P2P':'')
+  setText('connectionTitle',title)
+  setText('connectionHint',hint)
+  setText('connectionTag',connected?'CONNECTED':failed?'ISSUE':waiting?'WAITING':'OFFLINE')
+  $('connectionBanner').className='connection-banner '+stage
+  $('connectionBannerIcon').src='./icons/'+(connected?'check-circle-2':failed?'alert-circle':waiting?'clock-3':'link-2')+'.svg'
+  setText('peerSidebarStatus',connected?'Online':'Offline')
+  $('peerRow').classList.toggle('connected',connected)
+  $('remoteCard').classList.toggle('disconnected',!connected)
+  $('remoteCard').classList.toggle('is-connected',connected)
+  setText('remotePresence',connected?'Connected':failed?'Unavailable':'Offline')
+  setText('remoteDisplayName',connected?'Peer':'Waiting for peer')
+  setText('remoteDisplayHint',connected?'No screen shared':waiting?'Send your invite link':failed?'Connection unavailable':'Create a room to connect')
+
   $('micButton').disabled=!state.room
   $('shareButton').disabled=!state.room
   $('audioButton').disabled=!state.peerId
@@ -171,9 +190,13 @@ function enterRoom(id) {
     room.onError(error=>{
       if (state.room!==room) return
       if (error?.code==='room-full') notice('Room is full.',true)
-      else if (error?.code==='relay-failed') notice('Signaling relays unavailable.',true)
-      else if (error?.code==='peer-connect-failed') notice('P2P connection failed on this network.',true)
-      else report(error)
+      else if (error?.code==='relay-failed') {
+        if (!state.peerId) status('Connection issue','failed')
+        notice('Signaling relays unavailable.',true)
+      } else if (error?.code==='peer-connect-failed') {
+        if (!state.peerId) status('Connection issue','failed')
+        notice('P2P connection failed on this network.',true)
+      } else report(error)
     })
     status('Waiting for peer','working')
   } catch(error) {
@@ -353,5 +376,8 @@ window.addEventListener('pagehide',()=>{
 })
 if (!window.isSecureContext) notice('Use HTTPS or localhost.',true)
 if (idFromHash()) enterRoom(idFromHash())
-else if (location.hash) notice('Invalid room link.',true)
+else {
+  status('Not connected')
+  if (location.hash) notice('Invalid room link.',true)
+}
 populateDevices()
