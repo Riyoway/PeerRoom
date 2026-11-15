@@ -4,58 +4,43 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0c111c">
-  <meta name="description" content="Peer-to-peer voice and screen sharing.">
+  <meta name="description" content="Peer-to-peer voice calls and screen sharing.">
   <title>PeerRoom</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./style.css">
-  <script src="./app.js" defer></script>
+  <script src="./app.js" type="module"></script>
 </head>
 <body>
   <div class="ambient ambient-a" aria-hidden="true"></div>
   <div class="ambient ambient-b" aria-hidden="true"></div>
   <div class="shell">
     <header class="topbar">
-      <div class="brand">
-        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-        <strong>PeerRoom</strong>
-      </div>
-      <div class="header-right">
-        <span class="status-dot" id="connectionDot"></span>
-        <span id="connectionLabel" role="status">Not connected</span>
-      </div>
+      <div class="brand"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><strong>PeerRoom</strong></div>
+      <div class="header-right"><span class="status-dot" id="connectionDot"></span><span id="connectionLabel" role="status">Not connected</span></div>
     </header>
 
     <main class="layout">
       <section class="main-column">
         <div class="panel video-panel">
-          <div class="panel-heading">
-            <h2>Call</h2>
-            <span class="pill"><span class="mini-dot"></span><span id="sessionMode">Waiting</span></span>
-          </div>
+          <div class="panel-heading"><h2>Call</h2><span class="pill" id="sessionMode">No room</span></div>
           <div class="video-grid">
             <div class="video-card remote-card">
               <video id="remoteVideo" autoplay playsinline></video>
-              <div id="remoteEmpty" class="video-empty">
-                <div class="screen-icon" aria-hidden="true">▣</div>
-                <strong>No screen shared</strong>
-              </div>
+              <div class="video-empty" id="remoteEmpty"><div class="screen-icon" aria-hidden="true">▣</div><strong>No screen shared</strong></div>
               <div class="video-label"><span class="avatar-icon">↗</span> Peer</div>
               <button id="fullScreen" class="floating-action" type="button" title="Fullscreen" aria-label="Fullscreen remote screen" disabled>⛶</button>
             </div>
             <div class="video-card local-card">
               <video id="localVideo" autoplay playsinline muted></video>
-              <div id="localEmpty" class="video-empty">
-                <div class="screen-icon small-screen" aria-hidden="true">▤</div>
-                <strong>Preview</strong>
-              </div>
+              <div id="localEmpty" class="video-empty"><div class="screen-icon small-screen" aria-hidden="true">▤</div><strong>Preview</strong></div>
               <div class="video-label"><span class="avatar-icon self">●</span> You</div>
             </div>
           </div>
           <audio id="remoteAudio" autoplay playsinline></audio>
           <div class="call-controls">
-            <button id="micButton" type="button" class="control-button"><span class="control-icon">🎙</span><span id="micButtonLabel">Start mic</span></button>
-            <button id="shareButton" type="button" class="control-button primary"><span class="control-icon">▣</span><span id="shareButtonLabel">Share screen</span></button>
-            <button id="audioButton" type="button" class="control-button"><span class="control-icon">♫</span><span id="audioButtonLabel">Unmute peer</span></button>
-            <button id="resetButton" type="button" class="control-button danger"><span class="control-icon">↺</span> Reset</button>
+            <button id="micButton" type="button" class="control-button" disabled><span class="control-icon">🎙</span><span id="micButtonLabel">Start mic</span></button>
+            <button id="shareButton" type="button" class="control-button primary" disabled><span class="control-icon">▣</span><span id="shareButtonLabel">Share screen</span></button>
+            <button id="audioButton" type="button" class="control-button" disabled><span class="control-icon">♫</span><span id="audioButtonLabel">Enable audio</span></button>
           </div>
           <div class="call-foot">
             <span><span class="tiny-dot" id="micDot"></span><span id="micStatus">Mic off</span></span>
@@ -63,64 +48,44 @@
             <span class="connection-note" id="iceStatus"></span>
           </div>
         </div>
-
         <div class="panel chat-panel">
           <div class="panel-heading"><h2>Chat</h2></div>
           <div id="chatLog" class="chat-log" role="log" aria-live="polite"><div class="empty-chat">No messages</div></div>
           <form id="chatForm" class="chat-form">
-            <input id="chatInput" autocomplete="off" maxlength="2000" placeholder="Message…" aria-label="Chat message" disabled>
+            <input id="chatInput" autocomplete="off" maxlength="2000" placeholder="Message…" aria-label="Message" disabled>
             <button id="chatSend" class="send-button" type="submit" disabled>Send</button>
           </form>
         </div>
       </section>
 
       <aside class="panel setup-panel">
-        <div class="panel-heading"><h2>Connect</h2></div>
-        <div class="role-switch" role="group" aria-label="Connection role">
-          <button id="hostTab" class="role-button selected" type="button" aria-pressed="true">Host</button>
-          <button id="guestTab" class="role-button" type="button" aria-pressed="false">Join</button>
+        <div class="panel-heading"><h2>Room</h2></div>
+        <div id="createPanel">
+          <button id="createButton" class="action-button" type="button">Create room <span>→</span></button>
         </div>
-        <div class="step-description">
-          <strong id="stepHeading">Create a connection</strong>
-          <p id="stepDescription">Send your offer to the other person.</p>
-        </div>
-        <div class="settings-box">
-          <label class="setting">
-            <span><strong>STUN</strong><small>Discover direct connections</small></span>
-            <input id="stunToggle" type="checkbox" checked>
-          </label>
-          <label class="setting">
-            <span><strong>Music input</strong><small>Disable voice processing</small></span>
-            <input id="musicMode" type="checkbox" checked>
-          </label>
-          <label class="device-setting" for="micDevice">
-            <strong>Input device</strong>
-            <select id="micDevice"><option value="">System default</option></select>
-          </label>
-        </div>
-        <div id="hostActions" class="action-group">
-          <button id="offerButton" class="action-button" type="button">Generate offer <span>→</span></button>
-        </div>
-        <div id="guestActions" class="action-group hidden">
-          <label for="incomingOffer" class="field-label">Peer's offer</label>
-          <textarea id="incomingOffer" class="signal-input" spellcheck="false" placeholder="Paste offer…" rows="4"></textarea>
-          <button id="answerButton" class="action-button" type="button">Generate answer <span>→</span></button>
-        </div>
-        <div id="outgoingSection" class="signal-section hidden">
-          <div class="field-heading">
-            <label class="field-label" for="outgoingSignal" id="outgoingLabel">Your code</label>
-            <span class="field-tag" id="outgoingType">OFFER</span>
+        <div id="roomPanel" class="hidden">
+          <label class="field-label" for="roomLink">Invite link</label>
+          <div class="link-control">
+            <input type="text" id="roomLink" readonly aria-label="Invite link">
+            <button type="button" id="copyLink" class="action-button">Copy</button>
           </div>
-          <textarea id="outgoingSignal" class="signal-input" readonly rows="4" spellcheck="false"></textarea>
-          <button id="copyButton" type="button" class="secondary-button">Copy code</button>
-          <p class="helper-text" id="outgoingHelp">Send this code to your peer.</p>
+          <div class="room-status" id="roomStatus">Waiting for peer…</div>
+          <button id="leaveButton" class="secondary-button" type="button">Leave room</button>
         </div>
-        <div id="hostReply" class="signal-section hidden">
-          <label class="field-label" for="incomingAnswer">Peer's answer</label>
-          <textarea id="incomingAnswer" class="signal-input" spellcheck="false" rows="4" placeholder="Paste answer…"></textarea>
-          <button id="acceptButton" class="action-button" type="button">Connect <span>→</span></button>
-        </div>
-        <div class="notice" id="notice" role="status" aria-live="polite">Exchange codes to connect.</div>
+        <details class="settings-box">
+          <summary>Audio settings</summary>
+          <div class="settings-content">
+            <label class="setting">
+              <span><strong>Music input</strong><small>Disable voice processing</small></span>
+              <input type="checkbox" id="musicMode" checked>
+            </label>
+            <label class="device-setting" for="micDevice">
+              <strong>Input device</strong>
+              <select id="micDevice"><option value="">System default</option></select>
+            </label>
+          </div>
+        </details>
+        <div id="notice" class="notice hidden" role="status" aria-live="polite"></div>
       </aside>
     </main>
   </div>

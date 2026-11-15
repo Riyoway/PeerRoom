@@ -275,3 +275,34 @@ button:disabled { opacity: .45; cursor: not-allowed; }
   .control-button.danger { margin-left: 0; }
   .call-foot .connection-note { width: 100%; margin-left: 0; }
 }
+
+/* One-link room workflow */
+.setup-panel .panel-heading { margin-bottom: 20px; }
+#createButton { margin-bottom: 10px; }
+#roomPanel { margin-bottom: 18px; }
+.link-control { display: flex; gap: 8px; }
+.link-control input {
+  flex: 1; min-width: 0; padding: 11px 12px; border-radius: 8px;
+  border: 1px solid #35475b; background: #0b1522; color: #e8f5f0;
+  font-family: ui-monospace, Consolas, monospace; font-size: 11px;
+}
+.link-control .action-button { width: auto; padding: 10px 16px; }
+.room-status { color: #a5b8ca; font-size: 12px; padding: 12px 0 4px; }
+.setup-panel .secondary-button {
+  background: #192434; color: #bfd0df; width: 100%; margin-top: 12px;
+  border: 1px solid #35485d; border-radius: 8px;
+}
+.setup-panel .settings-box {
+  display: block; margin-top: 17px; margin-bottom: 0;
+  border: 1px solid #314152; border-radius: 9px; overflow: hidden;
+}
+.setup-panel .settings-box > summary {
+  list-style: none; cursor: pointer; padding: 13px 14px; font-size: 12px;
+  color: #c2d1df; user-select: none;
+}
+.setup-panel .settings-box > summary::-webkit-details-marker { display: none; }
+.setup-panel .settings-box > summary:after { content: '⌄'; float: right; color: #9fbbd0; }
+.setup-panel .settings-box[open] > summary:after { content: '⌃'; }
+.setup-panel .settings-content { border-top: 1px solid #314152; }
+.setup-panel .notice { margin-top: 16px; }
+.video-empty strong { font-weight: 500; }

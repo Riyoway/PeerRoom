@@ -1,0 +1,13 @@
+{
+  "name": "peerroom",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/app.js --bundle --minify --format=esm --target=es2022 --outfile=app.js"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "trystero": "0.27.0"
+  }
+}

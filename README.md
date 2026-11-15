@@ -1,45 +1,49 @@
 # PeerRoom
 
-Minimal, browser-based peer-to-peer voice chat and screen sharing. Runs on GitHub Pages with no application backend or build step.
+Minimal browser-based voice chat and screen sharing over WebRTC.
+
+**Live:** https://riyoway.github.io/PeerRoom/
+
+## Use
+
+1. Open the site and click **Create room**.
+2. Send the invite link to someone. It is copied automatically when browser permissions allow.
+3. They open the link and the browsers connect automatically. Use **Start mic** or **Share screen**.
+
+No accounts, offer/answer codes, or app installation required.
 
 ## Features
 
-- One-to-one voice calls and screen sharing via WebRTC
-- Optional tab/system audio sharing (browser and OS dependent)
-- Microphone selection and mute controls
-- Music input mode (disables echo cancellation, noise suppression, and auto gain)
-- Peer-to-peer text chat over a WebRTC data channel
-- Static HTML, CSS, and JavaScript; no external runtime dependencies
+- One-link room invites and automatic peer discovery
+- One-to-one WebRTC voice calls and screen sharing
+- Browser tab/system audio sharing when supported
+- Microphone selection and an optional music input mode
+- P2P chat, mute controls, and leave/rejoin
+- Static site, deployed on GitHub Pages
 
-## Connect
+## Architecture
 
-1. Open the site in two browsers.
-2. **Host:** Select **Host**, generate an offer, and send its code to the other person.
-3. **Join:** Select **Join**, paste the offer, generate an answer, and send the answer code back.
-4. **Host:** Paste the answer and select **Connect**.
-5. Once connected, start your microphone or screen share.
+The **app is hosted entirely on GitHub Pages**. Peer discovery and WebRTC signaling use public Nostr relays via [Trystero](https://trystero.dev/); there is no application server or relay that you need to host or pay for.
 
-The offer and answer must be exchanged manually (for example, in a private messenger). This avoids the need for a signaling service.
+Once connected, media and chat are end-to-end encrypted and transmitted directly between browsers. Public signaling relays can see limited connection metadata, but they do not carry the call's media. Invite tokens are generated randomly and stored in the URL fragment (the part starting with #r=), which is not included in HTTP requests.
 
-## Deploy to GitHub Pages
+The app does **not** operate without any external services: automatic signaling depends on public Nostr relays, and direct P2P connectivity commonly uses public STUN servers. No TURN relay is configured, so connections can fail behind restrictive networks. Public relays may be unavailable or slow; this is a demonstration, not a high-availability calling platform.
 
-This repository can be deployed directly from the root of the `main` branch using **Settings → Pages → Deploy from a branch**. No install, build, or server configuration is required.
+The app does not record or upload call audio/video. Rooms have a best-effort two-user limit; anyone with the invite link may attempt to join. Share links privately.
 
-For local testing, use a secure context such as `http://localhost`. GitHub Pages uses HTTPS automatically.
+## Development
 
-## Limitations
+The generated app.js is committed so GitHub Pages needs **no build step**.
 
-- **No TURN relay.** Direct P2P connection may fail behind restrictive NATs, VPNs, firewalls, or some mobile networks.
-- **Public STUN by default.** Google STUN servers are used for connectivity discovery, not media relay. Disable STUN for local-only experiments.
-- **Manual signaling.** There are no room links, automatic matchmaking, or hosted connection servers.
-- **One-to-one only.** Multi-user rooms are not implemented.
-- **Screen/system audio support varies.** Browser and OS restrictions apply; mobile browsers may not support screen capture.
-- **Connection codes may expose network information.** Share them privately.
+To modify the client source:
 
-Media is encrypted in transit by WebRTC. This app does not record, upload, or store calls. Users connect directly whenever the network permits.
+    npm ci
+    npm run build
 
-## Files
+The source code is src/app.js, with bundled browser output in app.js. Deploy the repository's root directory from the main branch in **Settings → Pages**.
 
-- `index.html` — UI
-- `style.css` — styles
-- `app.js` — WebRTC, audio, signaling, and chat
+## Browser requirements
+
+Modern desktop browsers with WebRTC, HTTPS for microphone and screen capture, and access to the public signaling relays. System audio capture depends on OS/browser support. Mobile screen capture may be unavailable.
+
+Third-party code: Trystero (MIT) and bundled dependencies. See package-lock.json for exact development dependency versions.
